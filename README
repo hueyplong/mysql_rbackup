@@ -1,0 +1,1 @@
+Quick and dirty script to backup a mysql database (with options start/stop of slave) in a file-per-table tarball.
