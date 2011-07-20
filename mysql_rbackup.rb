@@ -12,7 +12,7 @@ require 'optparse'
 #  database info, 
 #  'db_name, db_user, db_pass'
 DATABASE_LIST = [
-  'DB_NAME, DB_USER, DB_PASS',
+  'DB_NAME, DB_USER, DB_PASS'
 ]
 
 #  local backup dir
@@ -26,7 +26,7 @@ TEMP_DIRECTORY = "/full/path/to/local/workspace/dir"
 #  remote scp info
 #  'user@host:folder, port'
 SCP_HOSTS = [
-  'USER@HOST:BACKUP_DIR, 22',
+  'USER@HOST:BACKUP_DIR, 22'
 ]
 
 #  local count
@@ -123,11 +123,11 @@ class MysqlRbackup
     for database in database_list
       Dir.chdir(temp_directory)
       name, user, pass = database.split(",")
-      password = pass.strip.empty? ? '' : "-p#{pass}"
+      password = pass.strip.empty? ? '' : "-p#{pass.strip}"
       tgz_filename = "#{name}.#{DATE}.#{TIME}.tgz"
       # stop the slave if necessary
       puts "Stopping the slave..." if options[:verbose] && options[:slave]
-      exec "mysql -u #{user} #{password} --execute='stop slave;'" if options[:slave]
+      `mysql -u #{user} #{password} --execute='stop slave;'` if options[:slave]
       
       # switch to the current database and backup each table
       tables = `echo 'show tables' | mysql -u #{user} #{password} #{name} | grep -v Tables_in_`
@@ -140,7 +140,7 @@ class MysqlRbackup
       
       # restart the slave if necessary
       puts "Restarting the slave..." if options[:verbose] && options[:slave]
-      exec "mysql -u #{user} #{password} --execute='start slave;'" if options[:slave]
+      `mysql -u #{user} #{password} --execute='start slave;'` if options[:slave]
       
       # zip it up and move it to the backup directory
       puts "Completed backups, zipping it up..." if options[:verbose]
